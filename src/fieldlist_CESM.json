@@ -64,6 +64,7 @@
     "prc_conversion_factor" : 1000,
     "prls_conversion_factor" : 1000,
     "# units in CAM (m/s), convert to (mm/day) required for plotting:      ":"",
-    "pr_conversion_mm_day" : 86400000
+    "pr_conversion_mm_day" : 86400000,
+    "date_int_offset" : 1
   }
 }

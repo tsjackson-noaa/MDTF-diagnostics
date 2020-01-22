@@ -16,6 +16,10 @@ load "$POD_HOME/evans_plot.ncl"
 begin
 ; Set variables for two runs.
 
+
+  date_off = getenv("date_int_offset")
+  date_offset = stringtointeger(date_off) ; 1 for native CESM, 0 for GFDL & CMIP
+
   setfileoption("nc", "SuppressClose", False)
 
   var_name = getenv("pr_var")
@@ -511,7 +515,13 @@ ps_name = ps_name0+"_pr."+region_plot+".dc."
          end if
  
 ; Requested start time and index in data
-          tstart = toint(run_years(iyear))*1000000+toint(months(imonth))*10000+(1*100) 
+          if (date_offset.eq.0) then
+            ; CMIP / GFDL date index
+            tstart = toint(run_years(iyear))*1000000+toint(months(imonth))*10000+(1*101) 
+          else if (date_offset.eq.1) then
+            ; CESM native date index
+            tstart = toint(run_years(iyear))*1000000+toint(months(imonth))*10000+(1*100) 
+          end if
           print(tstart)
           
 ; Adjust for ut_calendar problems in cam/climo runs as the first year is usually 0000 and
