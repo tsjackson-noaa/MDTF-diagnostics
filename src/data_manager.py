@@ -157,16 +157,6 @@ class DataManager(object):
         self.__dict__.update(paths.modelPaths(self))
         self.TEMP_HTML = os.path.join(self.MODEL_WK_DIR, 'pod_output_temp.html')
 
-        # dynamic inheritance to add netcdf manipulation functions
-        # source: https://stackoverflow.com/a/8545134
-        mixin = util.get_from_config('netcdf_helper', config, default='NetcdfHelper')
-        mixin = getattr(netcdf_helper, mixin)
-        self.__class__ = type(self.__class__.__name__, (self.__class__, mixin), {})
-        try:
-            self.nc_check_environ() # make sure we have dependencies
-        except Exception:
-            raise
-
         self.dry_run = util.get_from_config('dry_run', config, default=False)
         self.file_transfer_timeout = util.get_from_config(
             'file_transfer_timeout', config, default=0) # 0 = syntax for no timeout
@@ -351,9 +341,6 @@ class DataManager(object):
                 self._fetch_exception_handler(exc)
                 continue
 
-        # do translation/ transformations of data here
-        self.process_fetched_data_hook()
-
     def _fetch_exception_handler(self, exc):
         print exc
         keys_from_file = self.data_files.inverse()
@@ -435,7 +422,8 @@ class DataManager(object):
     def plan_data_fetch_hook(self):
         pass
 
-    def process_fetched_data_hook(self):
+    def preprocess_local_data(self, *args, **kwargs):
+        # do translation/ transformations of data here
         pass
 
     # -------------------------------------

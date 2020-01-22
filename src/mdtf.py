@@ -58,6 +58,7 @@ from ConfigParser import _Chainmap as ChainMap # in collections in py3
 import util
 import data_manager
 import environment_manager
+import netcdf_helper
 from shared_diagnostic import Diagnostic  
 
 class MDTFFramework(object):
@@ -90,6 +91,9 @@ class MDTFFramework(object):
             self.config['settings']['environment_manager'], 'EnvironmentManager'
         )
         self.Diagnostic = Diagnostic
+        self.NetCDFHelper = self.manual_dispatch(
+            self.config['settings']['netcdf_helper'], 'NetcdfHelper'
+        )
 
     def argparse_setup(self):
         """Wraps command-line arguments to script.
@@ -223,6 +227,9 @@ class MDTFFramework(object):
         if util.get_from_config('dry_run', default_args, default=False):
             default_args['settings']['test_mode'] = True
 
+        if util.get_from_config('netcdf_helper', default_args, default=False):
+            default_args['settings']['netcdf_helper'] = 'NcoNetcdfHelper'
+
         return default_args
 
     def set_mdtf_env_vars(self):
@@ -237,7 +244,7 @@ class MDTFFramework(object):
         # following are redundant but used by PODs
         self.config["envvars"]["RGB"] = os.path.join(paths.CODE_ROOT,'src','rgb')
 
-    _dispatch_search = [data_manager, environment_manager]
+    _dispatch_search = [data_manager, environment_manager, netcdf_helper]
 
     def manual_dispatch(self, class_prefix, class_suffix):
         # drop '_' and title-case class name
@@ -280,11 +287,16 @@ class MDTFFramework(object):
             caselist.append(case)
 
         for case in caselist:
-            env = self.EnvironmentManager(self.config)
-            env.pods = case.pods # best way to do this?
-            env.setUp()
-            env.run()
-            env.tearDown()
+            env_mgr = self.EnvironmentManager(self.config)
+            env_mgr.pods = case.pods # best way to do this?
+            nc_helper = self.NetCDFHelper()
+
+            case.preprocess_local_data(
+                netcdf_mixin=nc_helper, environment_manager=env_mgr
+            )
+            env_mgr.setUp()
+            env_mgr.run()
+            env_mgr.tearDown()
 
         for case in caselist:
             case.tearDown(self.config)
