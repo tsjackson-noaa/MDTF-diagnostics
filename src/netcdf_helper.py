@@ -30,11 +30,45 @@ class NetcdfHelper(object):
             )
 
     @staticmethod
-    def nc_extract_level():
+    def ncdump_h(in_file=None, cwd=None, dry_run=False):
         raise NotImplementedError(
             """NetcdfHelper is a stub defining method signatures for netcdf 
             manipulation wrapper functions, and shouldn't be called directly."""
             )
+
+    @classmethod
+    def nc_get_attribute(cls, attr_name, in_file=None, cwd=None, dry_run=False):
+        """Return dict of variables and values of a given attribute.
+        
+        If the attribute is not defined for the variable (or is the empty string), 
+        it's not included in the returned dict.
+        """
+        d = cls.ncdump_h(in_file=in_file, cwd=cwd, dry_run=dry_run)
+        dd = dict()
+        for var in d['variables']:
+            if d['variables'][var].get(attr_name, None):
+                dd[var] = d['variables'][var][attr_name]
+        return dd
+
+    @classmethod
+    def nc_get_axes_attributes(cls, var, in_file=None, cwd=None, dry_run=False):
+        """Return variable names corresponding to an axis attribute.
+
+        Do this by returning names in "shape" attribute of the dependent variable
+        passed in "var" argument.
+        """
+        d = cls.ncdump_h(in_file=in_file, cwd=cwd, dry_run=dry_run)
+        dd = dict()
+        if var not in d['variables']:
+            print "Can't find variable {} in {}.".format(var, in_file)
+            return dd
+        if 'shape' not in d['variables'][var]:
+            print "Can't find shape attribute for {} in {}.".format(var, in_file)
+            return dd
+        for ax in d['variables'][var]['shape']:
+            assert ax in d['variables']
+            dd[ax] = d['variables'][ax].copy() # copy dict of all attributes
+        return dd
 
 
 class NcoNetcdfHelper(NetcdfHelper):
@@ -129,37 +163,6 @@ class NcoNetcdfHelper(NetcdfHelper):
             return d
 
     @classmethod
-    def nc_get_attribute(cls, attr_name, in_file=None, cwd=None, dry_run=False):
-        """Return dict of variables and values of a given attribute.
-        
-        If the attribute is not defined for the variable (or is the empty string), 
-        it's not included in the returned dict.
-        """
-        d = cls.ncdump_h(in_file=in_file, cwd=cwd, dry_run=dry_run)
-        dd = dict()
-        for var in d['variables']:
-            if d['variables'][var].get(attr_name, None):
-                dd[var] = d['variables'][var][attr_name]
-        return dd
-
-    @classmethod
-    def nc_get_axes_attributes(cls, var, in_file=None, cwd=None, dry_run=False):
-        """Return variable names corresponding to an axis attribute.
-        """
-        d = cls.ncdump_h(in_file=in_file, cwd=cwd, dry_run=dry_run)
-        dd = dict()
-        if var not in d['variables']:
-            print "Can't find variable {} in {}.".format(var, in_file)
-            return dd
-        if 'shape' not in d['variables'][var]:
-            print "Can't find shape attribute for {} in {}.".format(var, in_file)
-            return dd
-        for ax in d['variables'][var]['shape']:
-            assert ax in d['variables']
-            dd[ax] = d['variables'][ax].copy() # copy dict of all attributes
-        return dd
-
-    @classmethod
     @_outfile_decorator
     def nc_change_variable_units(cls, new_units_dict,
         in_file=None, out_file=None, cwd=None, dry_run=False):
@@ -194,6 +197,7 @@ class NcoNetcdfHelper(NetcdfHelper):
             cwd=cwd, dry_run=dry_run
         )
         return [float(val) for val in ax_vals if val]
+
 
 class CdoNetcdfHelper(NetcdfHelper):
     pass
