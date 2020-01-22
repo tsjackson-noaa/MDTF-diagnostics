@@ -9,7 +9,7 @@ load "$NCARG_ROOT/lib/ncarg/nclscripts/csm/contributed.ncl"
 
 begin
 
-      casename = getenv("CASENAME")
+   casename = getenv("CASENAME")
    file_dir = getenv("WK_DIR")+"/model/netCDF/"
 
    neof    =  2
@@ -234,7 +234,7 @@ begin
 
 ;  diro = "./"
   filo = file_dir+"MJO_PC_INDEX.nc"
-  system("/bin/rm -f "+filo)   ; remove any pre-existing file
+  system("rm -f "+filo)   ; remove any pre-existing file
   ncdf = addfile(filo,"c")     ; open output netCDF file
                                     ; make time an UNLIMITED dimension 
   filedimdef(ncdf,"time",-1,True)   ; recommended  for most applications

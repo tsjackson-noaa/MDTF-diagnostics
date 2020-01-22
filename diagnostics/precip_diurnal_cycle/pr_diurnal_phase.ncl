@@ -512,6 +512,7 @@ ps_name = ps_name0+"_pr."+region_plot+".dc."
  
 ; Requested start time and index in data
           tstart = toint(run_years(iyear))*1000000+toint(months(imonth))*10000+(1*100) 
+          print(tstart)
           
 ; Adjust for ut_calendar problems in cam/climo runs as the first year is usually 0000 and
 ; ut_calendar changes this to 0001 !! So adjust tstart forward by 1 year.
@@ -520,8 +521,8 @@ ps_name = ps_name0+"_pr."+region_plot+".dc."
             print("- Adjusting start date for CAM standalone runs which begin 0000 and ut_calendar switches in to 0001")
           end if
 
-         ; print(t_utc)
-         ; print(tstart)
+          printMinMax(t_utc,0)
+          print(tstart)
 ; Where in alll of input data is tstart?
           itm0 = ind(t_utc.eq.tstart)
           if (ismissing(itm0)) then

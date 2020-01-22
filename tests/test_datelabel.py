@@ -157,6 +157,46 @@ class TestDateRange(unittest.TestCase):
         self.assertFalse(r1.contains(dt_range('2015-2021')))
         self.assertFalse(r1.contains(dt_range('2020-2021')))
 
+    def test_more_overlaps(self):
+        # mixed precision
+        rng1 = dt_range('1980-1990')
+        rng2 = [
+            (dt_range('19780501-19781225'), False, False, False, False),
+            (dt_range('19780501-19800101'), True,  True,  False, False),
+            (dt_range('19780501-19871225'), True,  True,  False, False),
+            (dt_range('19780501-19901231'), True,  True,  True,  False),
+            (dt_range('19780501-19981225'), True,  True,  True,  False),
+            (dt_range('19800101-19871225'), True,  True,  False, True),
+            (dt_range('19800101-19901231'), True,  True,  True,  True),
+            (dt_range('19800101-19981225'), True,  True,  True,  False),
+            (dt_range('19830501-19871225'), True,  True,  False, True),
+            (dt_range('19830501-19901231'), True,  True,  False, True),
+            (dt_range('19830501-19981225'), True,  True,  False, False),
+            (dt_range('19901231-19981225'), True,  True,  False, False),
+            (dt_range('19930501-19981225'), False, False, False, False)
+        ]
+        for d in rng2:
+            self.assertTrue(rng1.overlaps(d[0]) == d[1])
+            self.assertTrue(d[0].overlaps(rng1) == d[2])
+            self.assertTrue(d[0].contains(rng1) == d[3])
+            self.assertTrue(rng1.contains(d[0]) == d[4])
+    
+    def test_more_intersection(self):
+        # mixed precision
+        rng1 = dt_range('1980-1990')
+        rng2 = [
+            dt_range('19780501-19871225'),
+            dt_range('19780501-19901231'),
+            dt_range('19780501-19981225'),
+            dt_range('19800101-19871225'),
+            dt_range('19800101-19901231'),
+            dt_range('19800101-19981225'),
+            dt_range('19830501-19871225'),
+            dt_range('19830501-19901231'),
+            dt_range('19830501-19981225')
+        ]
+        for d in rng2:
+            self.assertTrue(rng1.intersection(d) == d.intersection(rng1))
 class TestDateFrequency(unittest.TestCase):
     def test_string_parsing(self):
         self.assertEqual(dt_freq('1hr'), dt_freq(1, 'hr'))

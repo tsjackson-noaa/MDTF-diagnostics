@@ -588,7 +588,7 @@ class GfdlarchiveDataManager(DataManager):
                     )
             # copy all case-level files
             print "\tDEBUG: files in {}".format(self.MODEL_WK_DIR)
-            for f in os.path.listdir(self.MODEL_WK_DIR):
+            for f in os.listdir(self.MODEL_WK_DIR):
                 print "\t\tDEBUG: found {}".format(f)
                 if os.path.isfile(os.path.join(self.MODEL_WK_DIR, f)):
                     gcp_wrapper(
@@ -837,6 +837,7 @@ def gcp_wrapper(source_path, dest_dir, timeout=0, dry_run=False):
     else:
         source = ['gfdl:' + source_path]
         dest = ['gfdl:' + dest_dir + os.sep]
+    print '\tDEBUG: GCP {} -> {}'.format(source[-1], dest[-1])
     util.run_command(
         ['gcp', '-sync', '-v', '-cd'] + source + dest,
         timeout=timeout, 

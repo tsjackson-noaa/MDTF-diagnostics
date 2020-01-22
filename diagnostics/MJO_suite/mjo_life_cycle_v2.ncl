@@ -10,7 +10,7 @@ load "$NCARG_ROOT/lib/ncarg/nclscripts/csm/contributed.ncl"
 
 begin
 
-      casename = getenv("CASENAME")
+   casename = getenv("CASENAME")
    file_dir = getenv("WK_DIR")+"/model/netCDF/"
 
    latS    = -20

@@ -98,32 +98,3 @@ if os.path.isfile(os.environ["DATADIR"]+"/day/"+os.environ["CASENAME"]+"."+os.en
 else:  
     print("file of "+os.environ["u850_var"]+" for Wheeler-Kiladis plots NOT found, skip computing wave spectra")
 
-#============================================================
-# Rename PS files
-#============================================================
-files = os.listdir(os.environ["WK_DIR"]+"/model/PS")
-a = 0
-while a < len(files):
-    file0 = files[a]
-    file1 = commands.getoutput("echo "+file0+"|sed -e s/"+os.environ["rlut_var"]+"/rlut/g")   
-    file2 = commands.getoutput("echo "+file0+"|sed -e s/"+os.environ["pr_var"]+"/pr/g")  
-    file3 = commands.getoutput("echo "+file0+"|sed -e s/"+os.environ["omega500_var"]+"/omega500/g") 
-    file4 = commands.getoutput("echo "+file0+"|sed -e s/"+os.environ["u200_var"]+"/u200/g") 
-    file5 = commands.getoutput("echo "+file0+"|sed -e s/"+os.environ["u850_var"]+"/u850/g")
-
-    if file0 != file1:
-        os.system("mv -f "+os.environ["WK_DIR"]+"/model/PS/"+file0+" "+os.environ["WK_DIR"]+"/model/PS/"+file1)
-
-    if file0 != file2:
-        os.system("mv -f "+os.environ["WK_DIR"]+"/model/PS/"+file0+" "+os.environ["WK_DIR"]+"/model/PS/"+file2)
-
-    if file0 != file3:
-        os.system("mv -f "+os.environ["WK_DIR"]+"/model/PS/"+file0+" "+os.environ["WK_DIR"]+"/model/PS/"+file3)
-
-    if file0 != file4:
-        os.system("mv -f "+os.environ["WK_DIR"]+"/model/PS/"+file0+" "+os.environ["WK_DIR"]+"/model/PS/"+file4)
-
-    if file0 != file5:
-        os.system("mv -f "+os.environ["WK_DIR"]+"/model/PS/"+file0+" "+os.environ["WK_DIR"]+"/model/PS/"+file5)
- 
-    a = a+1

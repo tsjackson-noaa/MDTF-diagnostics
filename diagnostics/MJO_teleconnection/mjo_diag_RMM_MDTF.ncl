@@ -61,7 +61,6 @@ print("Output data path :" + diro)
 print("Input data file for OLR :" + filolr)
 print("Input data file for U850:" + filu850)
 print("Input data file for U250:" + filu250)
-print(u250var)
 print("---------------------------------------------------------------------------------")
 
    ymdStrt = tointeger(getenv("strtdy"))                         ; start yyyymmdd
