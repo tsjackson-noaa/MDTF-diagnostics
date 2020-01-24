@@ -486,7 +486,7 @@ ps_name = ps_name0+"_pr."+region_plot+".dc."
               end if
             end if
             
-            tpert = 0.00001 ; Some temporary fix for incorrect ut_calendar functionality (rounding)
+            tpert = 0.00001 ; Some temporary fix for incorrect cd_calendar functionality (rounding)
             
           end if
           
@@ -511,7 +511,7 @@ ps_name = ps_name0+"_pr."+region_plot+".dc."
           delete(date)
           delete(datesec)
          else
-          t_utc = ut_calendar(time,-3)
+          t_utc = cd_calendar(time,-3)
          end if
  
 ; Requested start time and index in data
@@ -524,11 +524,11 @@ ps_name = ps_name0+"_pr."+region_plot+".dc."
           end if
           print(tstart)
           
-; Adjust for ut_calendar problems in cam/climo runs as the first year is usually 0000 and
-; ut_calendar changes this to 0001 !! So adjust tstart forward by 1 year.
+; Adjust for cd_calendar problems in cam/climo runs as the first year is usually 0000 and
+; cd_calendar changes this to 0001 !! So adjust tstart forward by 1 year.
           if (time@units.eq."days since 0000-01-01 00:00:00") then
             tstart = tstart + 1000000
-            print("- Adjusting start date for CAM standalone runs which begin 0000 and ut_calendar switches in to 0001")
+            print("- Adjusting start date for CAM standalone runs which begin 0000 and cd_calendar switches in to 0001")
           end if
 
           printMinMax(t_utc,0)

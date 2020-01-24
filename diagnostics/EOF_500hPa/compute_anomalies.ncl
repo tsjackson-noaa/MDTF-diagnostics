@@ -64,13 +64,13 @@ end do
 time_all = f_zg->$time_coord$
 if (date_offset.eq.0) then
    ; CMIP / GFDL date index, use YYYYMM
-   date_all = ut_calendar(time_all,-1)
+   date_all = cd_calendar(time_all,-1)
    year_all = date_all/100
    start_date = firstyr*100+1
    end_date = (lastyr)*100+12
 else if (date_offset.eq.1) then
    ; CESM native date index, use YYYYMMDD
-   date_all = ut_calendar(time_all,-2)
+   date_all = cd_calendar(time_all,-2)
    year_all = date_all/10000
    start_date = firstyr*10000+201
    end_date = (lastyr+1)*10000+101

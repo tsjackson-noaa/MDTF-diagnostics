@@ -48,7 +48,7 @@ begin
 ;***********************************************************
    f       = addfile (filolr , "r")                         
    TIME    = f->time                          ; days since ...
-   YMD     = ut_calendar(TIME, -2)            ; entire (time,6)
+   YMD     = cd_calendar(TIME, -2)            ; entire (time,6)
 
    ymdStrt = min(YMD(:))
    ymdLast = max(YMD(:))
@@ -82,7 +82,7 @@ begin
 
    lon     = f->lon                                           
    time    = f->time             ; days since ...
-   date    = ut_calendar(time, -2)            ; yyyymmdd
+   date    = cd_calendar(time, -2)            ; yyyymmdd
 
 ;************************************************
 ; Apply the band pass filter to the original anomalies

@@ -28,13 +28,13 @@
       "var_name" : "v200_var",
       "freq" : "day",
       "requirement" : "required",
-      "alternates" : ["v_var"]
+      "#alternates" : ["v_var"]
     },
     {
       "var_name" : "u200_var",
       "freq" : "day",
       "requirement" : "required",
-      "alternates" : ["u_var"]
+      "#alternates" : ["u_var"]
     },
     {
       "var_name" : "u850_var",

@@ -66,7 +66,7 @@ yr2 = stringtointeger(getenv("LASTYR"))
 
 time_coord = getenv("time_coord")
 time_all = f->$time_coord$
-date_all = ut_calendar(time_all,-2)
+date_all = cd_calendar(time_all,-2)
 date_all!0 = "time"
 date_all&time = time_all
 date_all@units = "YYYYMMDD"

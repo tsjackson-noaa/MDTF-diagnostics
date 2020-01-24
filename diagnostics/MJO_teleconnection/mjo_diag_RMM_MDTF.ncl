@@ -96,7 +96,7 @@ print("-------------------------------------------------------------------------
    ;--- read in time ---
    temp_time = a->time
    calend = temp_time@calendar
-;   print(calend)
+   print(calend)
  
   if(temp_time@calendar .ne. "360_day")  ;HadGEM2-CC uses a 360 day calendar
    utc_date = cd_calendar((a->time), 0)
