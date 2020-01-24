@@ -88,7 +88,9 @@ class NcoNetcdfHelper(NetcdfHelper):
                 move_back = False
             if 'cwd' not in kwargs:
                 kwargs['cwd'] = None
-            assert 'in_file' in kwargs
+            if 'in_file' not in kwargs:
+                print("nchelper didn't get in_file: {}".format(kwargs))
+                raise AssertionError()
             
             # only pass func the keyword arguments it accepts
             named_args = function.func_code.co_varnames

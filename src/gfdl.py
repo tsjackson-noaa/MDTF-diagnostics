@@ -512,13 +512,13 @@ class GfdlarchiveDataManager(DataManager):
         trim_count = 0
         for f in remote_files:
             file_name = os.path.basename(f._remote_data)
-            print("\tSet calendar attr of {} to lowercase".format(file_name))
-            util.run_command(['ncatted', '-O', 
-                '-a', 'calendar_type,time,o,c,julian',
-                '-a', 'calendar,time,o,c,julian',
-                file_name],
-                cwd=work_dir, dry_run=self.dry_run
-            ) 
+            # print("\tSet calendar attr of {} to lowercase".format(file_name))
+            # util.run_command(['ncatted', '-O', 
+            #     '-a', 'calendar_type,time,o,c,julian',
+            #     '-a', 'calendar,time,o,c,julian',
+            #     file_name],
+            #     cwd=work_dir, dry_run=self.dry_run
+            # ) 
             trimmed_range = f.date_range.intersection(
                 self.date_range, 
                 precision=f.date_range.start.precision
@@ -533,7 +533,9 @@ class GfdlarchiveDataManager(DataManager):
                     time_var_name, trimmed_range, 
                     in_file=file_name, cwd=work_dir, dry_run=self.dry_run
                 )
-        assert trim_count <= 2
+        if trim_count > 2:
+            print("trimmed {} files!".format(trim_count))
+            raise AssertionError()
 
         # cat chunks to destination, if more than one
         if len(remote_files) > 1:
