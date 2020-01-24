@@ -511,14 +511,6 @@ class GfdlarchiveDataManager(DataManager):
             time_var_name = 'time' # will probably give KeyError
         trim_count = 0
         for f in remote_files:
-            file_name = os.path.basename(f._remote_data)
-            # print("\tSet calendar attr of {} to lowercase".format(file_name))
-            # util.run_command(['ncatted', '-O', 
-            #     '-a', 'calendar_type,time,o,c,julian',
-            #     '-a', 'calendar,time,o,c,julian',
-            #     file_name],
-            #     cwd=work_dir, dry_run=self.dry_run
-            # ) 
             trimmed_range = f.date_range.intersection(
                 self.date_range, 
                 precision=f.date_range.start.precision
