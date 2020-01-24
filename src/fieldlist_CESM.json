@@ -60,11 +60,10 @@
   "units" : {
     "# TODO: assign to variables; do honest unit conversion                ":"",
     "# conversion factors: units in CAM (m/s), convert to kg/m2/s (mm/s)   ":"",
+    "# factor * [model native unit] = flux in kg m-2 s-1  _________________":"",
     "pr_conversion_factor" : 1000,
     "prc_conversion_factor" : 1000,
     "prls_conversion_factor" : 1000,
-    "# units in CAM (m/s), convert to (mm/day) required for plotting:      ":"",
-    "pr_conversion_mm_day" : 86400000,
     "date_int_offset" : 1
   }
 }
