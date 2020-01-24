@@ -294,12 +294,16 @@ end if
 ; create individual plots
 
   if(season.eq.0) then
-  yyyymmdd= cd_calendar(time0, -2)
+  ;yyyymmdd= cd_calendar(time0, -2)
+  yrfrac = cd_calendar(time0, 4)
   else
-  yyyymmdd= cd_calendar(time1, -2)
+  ;yyyymmdd= cd_calendar(time1, -2)
+  yrfrac = cd_calendar(time1, 4)
   end if
-  yrfrac  = yyyymmdd_to_yyyyfrac(yyyymmdd, 0.0)
-  delete(yrfrac@long_name)
+  ;yrfrac  = yyyymmdd_to_yyyyfrac(yyyymmdd, 0.0) ; yyyymmdd_to_yyyyfrac assumes gregorian year
+  if (isatt(yrfrac, "long_name")) then
+    delete(yrfrac@long_name)
+  end if
 
   nGrd    = nlat*mlon 
   eof_ts  = eof_ts/nGrd
@@ -327,7 +331,7 @@ delete(pltName)
 delete(eof)
 delete(eof_ts)
 delete(work)
-delete(yyyymmdd)
+; delete(yyyymmdd)
 delete(yrfrac)
 
 end do ; season loop

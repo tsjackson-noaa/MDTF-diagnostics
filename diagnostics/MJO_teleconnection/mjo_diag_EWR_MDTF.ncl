@@ -80,7 +80,7 @@ print("-------------------------------------------------------------------------
     P = P *pr_conv * 86400.0
 ; end if
 
-      P@_FillValue = -999  
+   P@_FillValue = -999.0  
 
   delete(date_p)
   time_p = P&time                     ; clarity
@@ -93,15 +93,23 @@ print("removing  seasonal cycle")
    P!0 = "time_p"
    P!1 = "lat"
    P!2 = "lon"
-   P@_FillValue=-999
+   P@_FillValue=-999.0
 
-   yyyyddd  = yyyymmdd_to_yyyyddd(date_p)
+   ;yyyyddd  = yyyymmdd_to_yyyyddd(date_p)
+   yyyyddd_double = cd_calendar(time_p, 4)
+   yyyy = floor(yyyyddd_double)
+   ddd = floor(365.0*(yyyyddd_double - yyyy)) + 1.0 ; runs from 1 to 365
+   yyyyddd = toint(1000.0*yyyy + ddd)
+   print("CALENDAR DEBUG")
+   printMinMax(yyyyddd, 0)
 
 ;calculate raw climatology then smooth it
 print("calculating raw and  smooth climatology ....")
-
+   print("DEBUG: "+num(ismissing(P))+" missing vals in pr")
    rawclim = clmDayTLL(P,yyyyddd)
+   print("DEBUG: "+num(ismissing(rawclim))+" missing vals in smoothclim")
    smoothclim = smthClmDayTLL(rawclim,2)
+   print("DEBUG: "+num(ismissing(smoothclim))+" missing vals in smoothclim")
 
    P_anom = calcDayAnomTLL(P,yyyyddd,smoothclim)
    P_anom@_FillValue=-999
