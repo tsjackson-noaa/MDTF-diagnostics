@@ -197,7 +197,7 @@ class MDTFFramework(object):
             default_args['settings']['test_mode'] = True
 
         if util.get_from_config('netcdf_helper', default_args, default=False):
-            default_args['settings']['netcdf_helper'] = 'NcoNetcdfHelper'
+            default_args['settings']['netcdf_helper'] = 'Nco'
 
         return default_args
 
@@ -259,11 +259,11 @@ class MDTFFramework(object):
         for case in caselist:
             env_mgr = self.EnvironmentManager(self.config)
             env_mgr.pods = case.pods # best way to do this?
-            nc_helper = self.NetCDFHelper()
+            # nc_helper = self.NetCDFHelper()
 
-            case.preprocess_local_data(
-                netcdf_mixin=nc_helper, environment_manager=env_mgr
-            )
+            # case.preprocess_local_data(
+            #     netcdf_mixin=nc_helper, environment_manager=env_mgr
+            # )
             env_mgr.setUp()
             env_mgr.run()
             env_mgr.tearDown()
