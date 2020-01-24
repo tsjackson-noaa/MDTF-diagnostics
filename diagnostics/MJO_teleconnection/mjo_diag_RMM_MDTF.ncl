@@ -107,7 +107,9 @@ print("-------------------------------------------------------------------------
 
     iStrt   = ind(ymd.eq.ymdStrt)              ; index start
     iLast   = ind(ymd.eq.ymdLast)              ; index last 
-    
+    print("CALENDAR DEBUG")   
+    printMinMax(ymd,0)
+    print("ymdStrt: "+ymdStrt+" iStrt: "+iStrt+" ymdLast: "+ymdLast+" iLast: "+iLast)
     print("Date range from year "+yeart(iStrt)+" to "+yeart(iLast))
 
     u250t = a->$u250var$(iStrt:iLast,lat_ind,:)     ;time,lev,lat,lon , 15N - 15S

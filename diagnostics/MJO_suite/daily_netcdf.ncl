@@ -73,12 +73,14 @@ date_all@units = "YYYYMMDD"
 year_all = date_all/10000
 
 start_date = yr1*10000+101
-start_date = yr1*10000+101
 if( time_all@calendar.eq."360_day") then
     end_date = yr2*10000+1230
 else
     end_date = yr2*10000+1231
 end if
+print("CALENDAR DEBUG")
+printMinMax(date_all, 0)
+print("start_date: "+start_date+" end_date: "+end_date)
 
 i1 = 0
 i2 = 0
