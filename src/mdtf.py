@@ -138,9 +138,9 @@ class MDTFFramework(object):
             if k in args:
                 d[k] = args[k]
         if 'model' not in d:
-            d['model'] = 'CMIP_GFDL'
+            d['model'] = 'SPEAR'
         if 'variable_convention' not in d:
-            d['variable_convention'] = 'CMIP_GFDL'
+            d['variable_convention'] = 'SPEAR'
         if 'CASENAME' not in d:
             d['CASENAME'] = '{}_{}'.format(d['model'], d['experiment'])
         if 'root_dir' not in d and 'CASE_ROOT_DIR' in args:
