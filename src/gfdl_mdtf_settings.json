@@ -24,14 +24,14 @@
       "pod_list": [
           "# Optional: PODs to run for this model only",
           "# (otherwise use pod_list below)",
-          "Wheeler_Kiladis",
-          "EOF_500hPa",
-          "convective_transition_diag",
+          "#Wheeler_Kiladis",
+          "#EOF_500hPa",
+          "#convective_transition_diag",
           "MJO_suite",
           "MJO_teleconnection",
-          "MJO_prop_amp",
-          "precip_diurnal_cycle",
-          "SM_ET_coupling"
+          "#MJO_prop_amp",
+          "#precip_diurnal_cycle",
+          "#SM_ET_coupling"
       ]
     }
   ],
@@ -41,14 +41,14 @@
   "# Comment out any with # at start of line.                              ":"",
 
   "pod_list" : [
-    "Wheeler_Kiladis",
-    "EOF_500hPa",
-    "convective_transition_diag",
+    "#Wheeler_Kiladis",
+    "#EOF_500hPa",
+    "#convective_transition_diag",
     "MJO_suite",
     "MJO_teleconnection",
-    "MJO_prop_amp",
-    "precip_diurnal_cycle",
-    "SM_ET_coupling"
+    "#MJO_prop_amp",
+    "#precip_diurnal_cycle",
+    "#SM_ET_coupling"
   ],
 
   "# PATHS ----------------------------------------------------------------":"",

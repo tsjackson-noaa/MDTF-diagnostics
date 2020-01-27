@@ -82,14 +82,20 @@ class TestDate(unittest.TestCase):
 
     def test_incr_decr(self):
         test = dt(2019)
-        self.assertEqual(test.increment(), dt(2020))
-        self.assertEqual(test.decrement(), dt(2018))
+        args = (test.lower, test.precision)
+        self.assertEqual(test.increment(*args), datetime.datetime(2020,1,1))
+        self.assertEqual(test.decrement(*args), datetime.datetime(2018,1,1))
         test = dt(2019,1)
-        self.assertEqual(test.increment(), dt(2019, 2))
-        self.assertEqual(test.decrement(), dt(2018, 12))
+        args = (test.lower, test.precision)
+        self.assertEqual(test.increment(*args), datetime.datetime(2019, 2,1))
+        self.assertEqual(test.decrement(*args), datetime.datetime(2018, 12,1))
         # leap year
-        self.assertEqual(dt(2020,2,28).increment(), dt(2020,2,29))
-        self.assertEqual(dt(2020,3,1,0).decrement(), dt(2020,2,29,23))
+        test = dt(2020,2,28)
+        args = (test.lower, test.precision)
+        self.assertEqual(test.increment(*args), datetime.datetime(2020,2,29))
+        test = dt(2020,3,1,0)
+        args = (test.lower, test.precision)
+        self.assertEqual(test.decrement(*args), datetime.datetime(2020,2,29,23))
 
 
 class TestDateRange(unittest.TestCase):
@@ -107,7 +113,7 @@ class TestDateRange(unittest.TestCase):
 
     def test_input_list_parsing(self):
         self.assertEqual(
-            dt_range((dt(2015), dt(2010), dt(2019), dt(2017))), 
+            dt_range.from_date_span(dt(2015), dt(2010), dt(2019), dt(2017)), 
             dt_range(2010, 2019))
         self.assertEqual(dt_range(['20100201', '20190918']), 
             dt_range('20100201', '20190918'))
@@ -117,21 +123,21 @@ class TestDateRange(unittest.TestCase):
         dtr2 = dt_range('20190201', '20190228')
         dtr3 = dt_range('20190301', '20190331')
         self.assertEqual(
-            dt_range([dtr1, dtr2, dtr3]),
+            dt_range.from_contiguous_span(dtr1, dtr2, dtr3),
             dt_range(dt(2019,1,1), dt(2019,3,31))
         )
         self.assertEqual(
-            dt_range((dtr3, dtr1, dtr2)),
+            dt_range.from_contiguous_span(dtr3, dtr1, dtr2),
             dt_range(dt(2019,1,1), dt(2019,3,31))
         )
         with self.assertRaises(ValueError):
-            _ = dt_range((dtr3, dtr1))
+            _ = dt_range.from_contiguous_span(dtr3, dtr1)
         with self.assertRaises(ValueError):
-            _ = dt_range([dtr1, dt_range('20190214', '20190215')])
+            _ = dt_range.from_contiguous_span(dtr1, dt_range('20190214', '20190215'))
         with self.assertRaises(ValueError):
-            _ = dt_range([dtr1, dtr2, dtr3, dt_range('20190214', '20190215')])
+            _ = dt_range.from_contiguous_span(dtr1, dtr2, dtr3, dt_range('20190214', '20190215'))
         with self.assertRaises(ValueError):
-            _ = dt_range([dtr3, dtr1, dt_range('20181214', '20190215'), dtr2])
+            _ = dt_range.from_contiguous_span(dtr3, dtr1, dt_range('20181214', '20190215'), dtr2)
 
     def test_overlaps(self):
         r1 = dt_range(dt(2010), dt(2019))
@@ -157,6 +163,19 @@ class TestDateRange(unittest.TestCase):
         self.assertFalse(r1.contains(dt_range('2015-2021')))
         self.assertFalse(r1.contains(dt_range('2020-2021')))
 
+<<<<<<< HEAD
+=======
+    def test_intersect(self):
+        r1 = dt_range('2000-2010')
+        with self.assertRaises(ValueError):
+            _ = r1.intersection(dt_range('1900-1990'))
+        self.assertEqual(r1.intersection(dt_range('2002-2008')), dt_range('2002-2008'))
+        self.assertEqual(r1.intersection(dt_range('1999-2018')), dt_range('2000-2010'))
+        self.assertEqual(r1.intersection(dt_range('2002-2018')), dt_range('2002-2010'))
+        self.assertEqual(r1.intersection(dt_range('1999-2008')), dt_range('2000-2008'))
+        self.assertEqual(r1.intersection(dt_range('2000-2010')), dt_range('2000-2010'))
+
+>>>>>>> feature/date-intervals
     def test_more_overlaps(self):
         # mixed precision
         rng1 = dt_range('1980-1990')
@@ -197,6 +216,16 @@ class TestDateRange(unittest.TestCase):
         ]
         for d in rng2:
             self.assertTrue(rng1.intersection(d) == d.intersection(rng1))
+
+    def test_repr(self):
+        globs = {'DateRange': dt_range, 'Date': dt}
+        r1 = dt_range('2000-2010')
+        self.assertEqual(r1, eval(repr(r1), globs))
+        r1 = dt_range('199912-200001')
+        self.assertEqual(r1, eval(repr(r1), globs))
+        r1 = dt_range('20000101-20000201')
+        self.assertEqual(r1, eval(repr(r1), globs))
+
 class TestDateFrequency(unittest.TestCase):
     def test_string_parsing(self):
         self.assertEqual(dt_freq('1hr'), dt_freq(1, 'hr'))
