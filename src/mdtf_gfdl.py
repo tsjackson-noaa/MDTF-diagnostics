@@ -50,7 +50,7 @@ class GFDLMDTFFramework(MDTFFramework):
         for action in self.parser._actions:
             if action.dest == 'config_file':
                 action.default = os.path.join(self.code_root, 'src', 
-                    'gfdl_mdtf_settings.json')
+                    'mdtf_SPEAR_temp.json')
 
     @classmethod
     def parse_mdtf_args(cls, user_args_list, default_args, rel_paths_root=''):
