@@ -3,16 +3,8 @@ import os
 import shutil
 import datelabel
 import util
-from xml.parsers import expat
+import StringIO
 import xml.etree.ElementTree as ET
-
-class DisableXmlNamespaces:
-    def __enter__(self):
-            self.oldcreate = expat.ParserCreate
-            expat.ParserCreate = lambda encoding, sep: self.oldcreate(encoding, None)
-    def __exit__(self, type, value, traceback):
-            expat.ParserCreate = self.oldcreate
-
 
 class NetcdfHelper(object):
     def __init__(self):
@@ -153,6 +145,22 @@ class NcoNetcdfHelper(NetcdfHelper):
     def ncdump_h(in_file=None, cwd=None, dry_run=False):
         """Return header information for all variables in a file.
         """
+        def _parse_xml_wrapper(str_):
+            # strips namespaces; https://stackoverflow.com/a/25920989
+            # https://stackoverflow.com/a/53738357 would be more robust, but for
+            # some reason I can't reproduce it
+            f_obj = StringIO.StringIO(str_)
+            it = ET.iterparse(f_obj)
+            for _, el in it:
+                if '}' in el.tag:
+                    el.tag = el.tag.split('}', 1)[1]  # strip all namespaces
+                for at in el.attrib.keys(): # strip namespaces of attributes too
+                    if '}' in at:
+                        newat = at.split('}', 1)[1]
+                        el.attrib[newat] = el.attrib[at]
+                        del el.attrib[at]
+            return it.root
+
         d = {'dimensions': dict(), 'variables':dict()}
         if dry_run:
             return d # dummy answer
@@ -161,22 +169,20 @@ class NcoNetcdfHelper(NetcdfHelper):
             ['ncks', '--xml', '-m', in_file],
             cwd=cwd, dry_run=dry_run
         )
-        with DisableXmlNamespaces():
-            root = ET.fromstring('\n'.join(xml_str))  # need parser=None?
+        root = _parse_xml_wrapper('\n'.join(xml_str))
         for dim in root.iter('dimension'):
             d['dimensions'][dim.attrib['name']] = int(dim.attrib['length'])
+        dv = d['variables']
         for var in root.iter('variable'):
             k = var.attrib['name']
-            d['variables'][k] = var.attrib.copy()
-            del d['variables'][k]['name']
+            dv[k] = var.attrib.copy()
+            del dv[k]['name']
             for att in var:
                 if 'name' not in att.attrib or 'value' not in att.attrib:
                     continue
-                att_nm = att.attrib['name']
-                if att_nm == 'shape':
-                    d['variables'][k][att_nm] = att.attrib['value'].split(' ')
-                else:
-                    d['variables'][k][att_nm] = att.attrib['value']
+                dv[k][att.attrib['name']] = att.attrib['value']
+            if dv[k].get('shape', None):
+                dv[k]['shape'] = dv[k]['shape'].split(' ')
         return d
 
     @classmethod
