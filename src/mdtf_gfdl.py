@@ -15,7 +15,6 @@ class GFDLMDTFFramework(MDTFFramework):
         self.set_tempdir()
         super(GFDLMDTFFramework, self).__init__()
 
-
     @staticmethod
     def set_tempdir():
         """Setting tempfile.tempdir causes all temp directories returned by 
@@ -30,7 +29,7 @@ class GFDLMDTFFramework(MDTFFramework):
         elif os.path.isdir('/net2'):
             tempfile.tempdir = os.path.join('/net2', os.environ['USER'], 'tmp')
             if not os.path.isdir(tempfile.tempdir):
-                os.makedirs(tempfile.tempdir)
+                gfdl.make_remote_dir(tempfile.tempdir)
         else:
             print("Using default tempdir on this system")
         os.environ['MDTF_GFDL_TMPDIR'] = tempfile.gettempdir()
@@ -61,8 +60,18 @@ class GFDLMDTFFramework(MDTFFramework):
             user_args_list, default_args, rel_paths_root)
 
     def _post_config_init(self):
-        self.fetch_obs_data()
+        timeout = util.get_from_config('file_transfer_timeout', self.config, default=0)
+        dry_run = util.get_from_config('dry_run', self.config, default=False)
+
+        self.fetch_obs_data(timeout, dry_run)
+        paths = util.PathManager()
+        if not os.path.exists(paths.OUTPUT_DIR):
+            # otherwise mdtf.set_mdtf_env_vars will throw error when trying to 
+            # create it on a read-only volume
+            gfdl.make_remote_dir(paths.OUTPUT_DIR, timeout, dry_run)
+
         super(GFDLMDTFFramework, self)._post_config_init()
+
         if self.config['settings']['frepp']:
             # set up cooperative mode -- hack to pass config settings
             gfdl.GfdlDiagnostic._config = self.config
@@ -88,9 +97,7 @@ class GFDLMDTFFramework(MDTFFramework):
                 os.path.isdir(os.path.join(case_outdir, p))
             ]
 
-    def fetch_obs_data(self):
-        dry_run = util.get_from_config('dry_run', self.config, default=False)
-        
+    def fetch_obs_data(self, timeout=0, dry_run=False):
         source_dir = self.config['paths']['OBS_DATA_SOURCE']
         dest_dir = self.config['paths']['OBS_DATA_ROOT']
         if source_dir == dest_dir:
@@ -100,7 +107,7 @@ class GFDLMDTFFramework(MDTFFramework):
         if gfdl.running_on_PPAN():
             print("\tGCPing data from {}.".format(source_dir))
             # giving -cd to GCP, so will create dirs
-            gfdl.gcp_wrapper(source_dir, dest_dir, dry_run=dry_run)
+            gfdl.gcp_wrapper(source_dir, dest_dir, timeout=timeout, dry_run=dry_run)
         else:
             print("\tSymlinking obs data dir to {}.".format(source_dir))
             dest_parent = os.path.dirname(dest_dir)
